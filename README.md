@@ -4,11 +4,11 @@ A weather web app to check current weather based on current location and user in
 
 <!-- BUILT WITH -->
 ## Built With
-* [![React][React.js]][React-url]
+* # React Js
 
-* ![MaterialUi][mui]
+* # Material UI
 
-* OpenWeatherMap API
+* # OpenWeatherMap API
 
 ## Prerequisites
 
@@ -20,7 +20,7 @@ Download node and npm latest version on your local machine.
 ## Installation
 Steps to setup project to local machine.
 
-1. CLone the repo
+1. Clone the repo
    ```sh
    git clone https://github.com/kamalchakma1/weather_app.git
    ```
