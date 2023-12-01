@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import WaterDropOutlinedIcon from '@mui/icons-material/WaterDropOutlined';
 import AirOutlinedIcon from '@mui/icons-material/AirOutlined';
 import DailyReport from "../components/DailyReport";
 import { useState,useEffect } from "react";
+import weatherVector from "../assets/images/3324647.jpg"
 
 // Styled Components
 const Container = styled.div`
@@ -36,6 +36,11 @@ const Input=styled.input`
   font-weight: 500;
   &:hover{
     outline:none;
+  },
+  &::placeholder {
+    color:whitesmoke;
+    font-size: 18px;
+    padding-top: -50px;   
   },
   &:focus{
     outline:none;
@@ -133,66 +138,205 @@ const DailyReportContainer=styled.div`
   height: 160px;
   width: 100%;
 `
+const Image=styled.img`
+  height: 100px;
+  object-fit:contain;
+  width: 100px;
+`
+const WeatherIconContainer=styled.div`
+  background-color:  #ffffff54;
+  border-radius: 50%;
+  display: flex;
+  align-items:center;
+  justify-content: center;
+  height: 135px;
+  margin-top: -32px;
+  width: 135px;
+`
+const Message=styled.h3`
+  font-weight: 400;
+`
+const DefaultMessage=styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content: center;
+  width: 100%;
+`
+const WeatherVec=styled.img`
+  border-radius: 50%;
+  object-fit: obtain;
+  height: 180px;
+  width: 180px;
+`
 function Home() {
-  const[city,setCity] = useState(null);
-  const[lat,setLat]=useState(null);
-  const[lon,setLon]=useState(null);
 
+  // STATES
+  const[city,setCity] = useState("");
+  const[country,setCountry] = useState("")
+  const[lat,setLat]=useState("");
+  const[lon,setLon]=useState("");
+  const[currentCity,setCurrentCity]=useState("")
+  const[currentCountry,setCurrentCountry]=useState("")
+  const[currentTemp,setCurrentTemp]=useState("")
+  const[weatherCondition,setWeatherCondition]= useState("")
+  const[wind,setWind]=useState("")
+  const[Humidity,setHumidity] = useState("")
+  const[weatherIcon,setWeatherIcon] = useState("")
+  const[minTemp,setMinTemp] = useState("")
+  const[maxTemp,setMaxTemp] = useState("")
 
+  // API_KEY
+  const API_KEY=process.env.API_KEY||"1d665706796830aa099b4bbd455525b9";
 
-  // GET city latitide and longitutde
+  // Current Date
+  const today=new Date()
+  const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const todayDate=`${days[today.getDay()]} ${today.getDate()}-${months[today.getMonth()].slice(0,3)}-${today.getFullYear()}`
 
-  const getWeather=()=>{
-    if(city){
-      alert("Weather Details")
-    }else{
-      alert("Please Enter City Name")
-    }   
+  // Get Weather Details - common functionality
+  const getWeatherDeatils=(result)=>{
+      setMinTemp(result.main.temp_min.toFixed(1))
+      setMaxTemp(result.main.temp_max.toFixed(1))
+      setWind(result.wind.speed)
+      setCurrentTemp(Math.round(result.main.temp))
+      setWeatherCondition(result.weather[0].description)
+      setHumidity(result.main.humidity)
+      setWeatherIcon(result.weather[0].icon)
   }
+
+  // Common OpenWeatherMapAPI URL to get weahter details
+  const getUrl=(latitude,longitude)=>{
+    const url=`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`
+    return url;
+  }
+
+  // When page load first time this will execute
+  useEffect(()=>{   
+      if(navigator.geolocation){
+         navigator.geolocation.getCurrentPosition((position)=>{
+         const getData=async()=>{
+          try{
+               await fetch(getUrl(position.coords.latitude,position.coords.longitude))
+               .then((res)=>res.json())
+               .then((result)=>{
+                  getWeatherDeatils(result)
+                  setCurrentCity(result.name); // for default weather
+                  setCurrentCountry(result.sys.country) // for default weather
+                })  
+              }catch(error){
+                 console.log(error)
+             }
+         }
+         getData()
+        })
+      }else{
+        alert("Please enable location.")
+      }    
+  },[])
+
+  // Getting City coordinates i.e Latitude and Longitude when user enter a city name
+  const getCity=async()=>{
+    try{
+        await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5&appid=${API_KEY}`)
+        .then((res)=>res.json())
+        .then((result)=>{
+          setLat(result[0].lat)
+          setLon(result[0].lon)
+          setCountry(result[0].country)
+        })
+    }catch(error){
+        console.log(error)
+    }
+  }
+
+  // Calling getCity function when city name is entered
+  useEffect(()=>{
+    getCity()
+  },[city])
+
+  // daily weather report
+  const dailyWeatherReport=async()=>{
+    try{
+        await fetch(`http://api.openweathermap.org/data/2.5/forecast/daily?q=London&cnt=3&appid=${API_KEY}`)
+        .then((res)=>res.json())
+        .then((result)=>{
+          console.log(result)
+        })
+    }catch(error){
+        console.log(error)
+    }
+  }
+
+  // Getting current Weather report
+  const getWeather=async()=>{
+    setCurrentCity(city)
+    setCurrentCountry(country)
+    try{
+        await fetch(getUrl(lat,lon))
+        .then((res)=>res.json())
+        .then((result)=>{
+           getWeatherDeatils(result)
+           setCurrentCity(city);
+           setCountry(result.sys.country)
+        }) 
+        dailyWeatherReport() 
+    }catch(error){
+        console.log(error)
+    }
+  }
+
   return (
-    <Container>  
+    <Container> 
 
         {/* SEARCH SECTION */}
         <Search>  
           <Icon>
             <SearchOutlinedIcon/>
           </Icon>
-          <Input value={city} onChange={(e)=>setCity(e.target.value)}></Input>
+          <Input value={city} onChange={(e)=>setCity(e.target.value)} placeholder="Enter City Name"></Input>
           {
-            city ?  <Icon>
-            <CloseOutlinedIcon style={{fontSize:"18px",marginTop:"5px"}} onClick={()=>setCity("")}/>
-          </Icon>:null
+            city ?<Icon><CloseOutlinedIcon style={{fontSize:"18px",marginTop:"5px"}} onClick={()=>setCity("")}/></Icon>:null
           }         
           <Icon>|</Icon>
-          <Icon onClick={getWeather} style={{marginRight:"10px"}}>
-            Search
-          </Icon>
+          <Icon onClick={getWeather} style={{marginRight:"10px"}}>Search</Icon>
         </Search>
 
         {/* CURRENT WEATHER SECTION */}
         <CurrentWeather>
+
           <ReportBox1>
-            <City>Bengaluru,IN</City>
-            <WeatherDetails>
+            {currentCity?<City>{`${currentCity} , ${currentCountry}`}</City>:null}            
+            {currentCity?<WeatherDetails>
               <WeatherIcon>
-                <WbSunnyOutlinedIcon style={{fontSize:"140px"}}/>
+                <WeatherIconContainer>
+                   <Image src={`https://openweathermap.org/img/wn/${weatherIcon}@2x.png`} alt="Weather Icon"/>
+                </WeatherIconContainer>
               </WeatherIcon>
               <WeatherReport>
-                <Temp>26&deg;C</Temp>
-                <Condition>Partialy Cloud</Condition>
+                {currentTemp?<Temp>{`${currentTemp}`}&deg;C</Temp>:null}                
+                <Condition>{weatherCondition}</Condition>
               </WeatherReport>
-            </WeatherDetails>
+            </WeatherDetails>:
+            <DefaultMessage>
+              <Message>Enter city name to know the weather</Message>
+              <WeatherVec src={weatherVector}/>
+            </DefaultMessage>
+            }            
           </ReportBox1>
+
           <ReportBox2>
-            <Day><CalendarTodayOutlinedIcon/>Monday 30-Nov-2023</Day>
-            <Day><WaterDropOutlinedIcon/>Humidity 90%</Day>
-            <Day><AirOutlinedIcon/>Wind 45Km/h </Day>
+            <Day><CalendarTodayOutlinedIcon/>{todayDate}</Day>
+            <Day><WaterDropOutlinedIcon/>{`Humidity  ${Humidity} %`}</Day>
+            <Day><AirOutlinedIcon/>{`Wind   ${wind} m/s`} </Day>
           </ReportBox2>
+
         </CurrentWeather>
 
         {/* DAILY WEATHER SECTION */}
         <DailyReportContainer>
-          <DailyReport day="Mon" date="2"/>      
+          <DailyReport day={days[today.getDay()]} date={today.getDate()} min={minTemp} max={maxTemp} icon={weatherIcon}/>      
           <DailyReport day="Tue" date="3"/>  
           <DailyReport day="Wed" date="4"/>      
           <DailyReport day="Thu" date="21"/>

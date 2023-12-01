@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
 
-
 // Styled Components
 const DailyTitle=styled.p`
    font-size: 20px;
@@ -51,7 +50,7 @@ const DailyWeather = styled.div`
    justify-content: space-evenly;
    height: 150px;
    margin-top: 50px;
-   width: 100px;
+   width: 120px;
    transition: all 0.5s ease;
    &:hover{
      transform: scale(1.1)
@@ -60,18 +59,27 @@ const DailyWeather = styled.div`
 const DailyReport=(props)=>{
     return(
      <DailyWeather>
+
          <DailyTitle>{props.day} {props.date}</DailyTitle>  
-         <DailyIcon><WbSunnyOutlinedIcon style={{fontSize:"50px"}}/></DailyIcon>
+         
+         <DailyIcon>
+            { props.icon?<img src={`https://openweathermap.org/img/wn/${props.icon}@2x.png`} alt="icon"/>:<WbSunnyOutlinedIcon style={{fontSize:"50px"}}/> }            
+         </DailyIcon>
+
          <DailyTemp>
-          <DailyMinMax>
-            <TempTitle>Min</TempTitle>
-            <DayTemp>26&deg;C</DayTemp>
-          </DailyMinMax>
-          <DailyMinMax>
-            <TempTitle>Max</TempTitle>
-            <DayTemp>29&deg;C</DayTemp>
-          </DailyMinMax>
+
+            <DailyMinMax>
+              <TempTitle>Min</TempTitle>
+              <DayTemp>{props.min}&deg;C</DayTemp>
+            </DailyMinMax>
+
+            <DailyMinMax>
+               <TempTitle>Max</TempTitle>
+               <DayTemp>{props.max}&deg;C</DayTemp>
+            </DailyMinMax>
+
          </DailyTemp>
+
      </DailyWeather>
     )
 }
