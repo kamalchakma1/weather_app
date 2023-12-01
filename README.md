@@ -1,5 +1,5 @@
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## About
 A weather web app to check current weather based on current location and user input. User can search desire location or city to check the current weather of that location.
 
 <!-- BUILT WITH -->
