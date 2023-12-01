@@ -4,11 +4,11 @@ A weather web app to check current weather based on current location and user in
 
 <!-- BUILT WITH -->
 ## Built With
-* # React Js
+* React Js
 
-* # Material UI
+* Material UI
 
-* # OpenWeatherMap API
+* OpenWeatherMap API
 
 ## Prerequisites
 
