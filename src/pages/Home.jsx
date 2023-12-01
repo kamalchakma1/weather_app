@@ -7,6 +7,7 @@ import AirOutlinedIcon from '@mui/icons-material/AirOutlined';
 import DailyReport from "../components/DailyReport";
 import { useState,useEffect } from "react";
 import weatherVector from "../assets/images/3324647.jpg"
+import { MobileView } from "../responsive.js";
 
 // Styled Components
 const Container = styled.div`
@@ -17,6 +18,7 @@ const Container = styled.div`
   height: 85vh;
   margin: 5vh auto;
   width: 56vw;
+  ${MobileView({width:"85vw",margin:"none"})};
 `
 const Search=styled.div`
   border: none;
@@ -26,7 +28,8 @@ const Search=styled.div`
   justify-content: space-between;
   padding:5px 20px;
   height: 40px; 
-  width: 96%;
+  width: 96%;  
+  ${MobileView({width: "88%",height:"30px",marginTop:"80px"})}
 `
 const Input=styled.input`
   border: none;
@@ -41,11 +44,13 @@ const Input=styled.input`
     color:whitesmoke;
     font-size: 18px;
     padding-top: -50px;   
+    ${MobileView({fontSize:"15px"})}
   },
   &:focus{
     outline:none;
   }
   width: 100%;
+  ${MobileView({fontSize:"20px"})}
 `
 const Icon=styled.div`
   color: rgba(255, 255, 255, 0.78);
@@ -63,6 +68,7 @@ const CurrentWeather=styled.div`
   height: 38vh;
   margin-top: 20px;
   width: 100%;
+  ${MobileView({flexDirection:"column",width:"100%",gap:"10px"})}
 `
 const ReportBox1=styled.div`
   border-radius: 6px;
@@ -73,19 +79,22 @@ const ReportBox1=styled.div`
   width: 50%;
   transition: all 0.5s ease;
   &:hover{
-   transform: scale(1.1)
+   transform: scale(1.1);
   }
+  ${MobileView({width:"88%"})}
 `
 const City=styled.h3`
   font-size: 25px;
   font-weight: 500;
   margin-top: -2px;
+  ${MobileView({marginLeft:"45px"})}
 `
 const WeatherDetails=styled.div`
   display: flex;
   justify-content: space-between;
   height: 200px;
   width: 100%;
+  ${MobileView({flexDirection:"column",alignItems:"center"})}
 `
 const WeatherIcon=styled.div`  
   display: flex;
@@ -93,7 +102,7 @@ const WeatherIcon=styled.div`
   align-items:center;
   justify-content:center;
   height: inherit;
-  width: 35%;
+  width: 35%;  
 `
 const WeatherReport=styled.div`
   display: flex;
@@ -106,10 +115,12 @@ const Temp=styled.h2`
   font-size: 100px;
   font-weight: 500;
   margin-top: 0px;
+  ${MobileView({fontSize:"60px",marginLeft:"20px"})}
 `
 const Condition=styled.span`
   margin-top: -80px;
   margin-left: 7px;
+  ${MobileView({marginTop:"-60px",marginLeft:"23px"})}
 `
 const ReportBox2=styled.div`
   border-radius: 6px;
@@ -125,11 +136,13 @@ const ReportBox2=styled.div`
   &:hover{
     transform: scale(1.1)
   }
+  ${MobileView({width:"88%",height:"200px"})}
 `
 const Day=styled.div`
   display: flex;
   gap: 10px;
   margin-left: 30px;
+  ${MobileView({marginTop:"20px"})}
 `
 const DailyReportContainer=styled.div`
   display: flex;
@@ -137,6 +150,7 @@ const DailyReportContainer=styled.div`
   justify-content: space-between;
   height: 160px;
   width: 100%;
+  ${MobileView({marginTop:"185px"})}
 `
 const Image=styled.img`
   height: 100px;
@@ -152,6 +166,7 @@ const WeatherIconContainer=styled.div`
   height: 135px;
   margin-top: -32px;
   width: 135px;
+  ${MobileView({height:"110px",width:"110px",marginTop:"5px"})}
 `
 const Message=styled.h3`
   font-weight: 400;
@@ -256,19 +271,6 @@ function Home() {
     getCity()
   },[city])
 
-  // daily weather report
-  const dailyWeatherReport=async()=>{
-    try{
-        await fetch(`http://api.openweathermap.org/data/2.5/forecast/daily?q=London&cnt=3&appid=${API_KEY}`)
-        .then((res)=>res.json())
-        .then((result)=>{
-          console.log(result)
-        })
-    }catch(error){
-        console.log(error)
-    }
-  }
-
   // Getting current Weather report
   const getWeather=async()=>{
     setCurrentCity(city)
@@ -281,7 +283,6 @@ function Home() {
            setCurrentCity(city);
            setCountry(result.sys.country)
         }) 
-        dailyWeatherReport() 
     }catch(error){
         console.log(error)
     }

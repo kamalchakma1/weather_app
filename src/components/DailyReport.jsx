@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
 
+
 // Styled Components
 const DailyTitle=styled.p`
    font-size: 20px;
@@ -54,7 +55,8 @@ const DailyWeather = styled.div`
    transition: all 0.5s ease;
    &:hover{
      transform: scale(1.1)
-   }
+   },
+  
 `
 const DailyReport=(props)=>{
     return(
