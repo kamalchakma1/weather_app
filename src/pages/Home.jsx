@@ -202,7 +202,9 @@ function Home() {
   const[maxTemp,setMaxTemp] = useState("")
 
   // API_KEY
-  const API_KEY=process.env.API_KEY||"1d665706796830aa099b4bbd455525b9";
+  // Paste your key after "||" in case env not work it will take it
+  //Keep In Mind - remove your api key from here before make your app public,use env.
+  const API_KEY=process.env.API_KEY||"Paste Your OpenWeather API KEY HERE"; 
 
   // Current Date
   const today=new Date()
